@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spidernet.dashboard.dao.MenuMapper">
+	<resultMap id="menuMap" type="com.spidernet.dashboard.entity.Menu">
+		<id property="id" column="ID" javaType="String" />
+		<result property="name" column="NAME" javaType="String" />
+		<result property="url" column="URL" javaType="String" />
+		<result property="sort" column="SORT" javaType="int" />
+		<result property="parentId" column="PARENT_ID" javaType="String" />
+		<result property="remark" column="REMARK" javaType="String" />
+		<result property="picUrl" column="PIC_URL" javaType="String" />
+		<result property="valid" column="VALID" javaType="String" />
+	</resultMap>
+	
+	<select id="queryMenuList" resultMap="menuMap">
+		select * from t_menu where valid='Y' order by SORT asc;
+	</select>
+	
+	<select id="getMenuById" parameterType="String" resultMap="menuMap">
+		select * from t_menu where valid='Y' and ID = #{id};
+	</select>
+	
+	
+	<select id="getNameById" parameterType="String" resultType="String">
+	    SELECT name FROM T_MENU WHERE ID = #{id} and valid='Y'
+	</select>
+	
+	
+	<select id="getSortByParentId" parameterType="String" resultType="int">
+	    SELECT max(sort) FROM T_MENU WHERE PARENT_ID = #{parentId} and valid='Y'
+	</select>
+	
+	<insert id="addMenu" parameterType="com.spidernet.dashboard.entity.Menu">
+	    INSERT INTO T_MENU (id, name, url, sort, parent_id, remark, pic_url, valid)
+        VALUES 
+        (#{id}, #{name}, #{url}, #{sort}, #{parentId}, #{remark}, #{picUrl}, 'Y')
+	</insert>
+	
+	<update id="updateMenu" parameterType="com.spidernet.dashboard.entity.Menu">
+		update T_MENU SET
+		NAME = #{name},URL =  #{url}, SORT = #{sort},
+		PARENT_ID = #{parentId}, REMARK = #{remark},
+		PIC_URL =#{picUrl}
+		where ID=#{id}
+	</update>
+	
+	<update id="deleteMenu" parameterType="com.spidernet.dashboard.entity.Menu">
+		update T_MENU SET
+		 valid='N'
+		where id= #{id}
+		or parent_id = #{id}
+	</update>
+</mapper>
